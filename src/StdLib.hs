@@ -1,7 +1,8 @@
 module StdLib(initST) where
 
 import Type 
-import Control.Monad.Except (liftIO,throwError)
+import Control.Monad.Except (throwError)
+import Control.Monad.IO.Class (liftIO)
 import Runtime
 import qualified Data.Map as Map
 import Data.Maybe

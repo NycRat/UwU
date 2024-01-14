@@ -10,6 +10,7 @@ import Data.Ord
 import Data.Maybe
 import Control.Monad
 import Control.Monad.Except
+import Control.Monad.IO.Class (liftIO)
 
 runProgram :: [Stmt] -> Runtime()
 runProgram stmts = foldM_ interpret initST stmts
@@ -139,6 +140,13 @@ evalExpr (Division expr1 expr2) st = do
                                 else return $ IntType $ i1 `div` i2
         _ -> throwError $ CustomError "[Error] Division is only supported for ints"
 
+evalExpr (Mod expr1 expr2) st = do
+    (e1,e2) <- evalBi expr1 expr2 st
+    case (e1,e2) of
+        (IntType i1, IntType i2) -> if i2 == 0
+                                then throwError $ CustomError "[Error] mod by 0 undefined"
+                                else return $ IntType $ i1 `mod` i2
+        _ -> throwError $ CustomError "[Error] Mod is only supported for ints"
 
 evalCond' :: Ordering -> Expr -> Expr -> SymbolTable -> Runtime(Bool)
 evalCond' o expr1 expr2 st = do
